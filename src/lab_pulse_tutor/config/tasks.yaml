@@ -1,0 +1,10 @@
+format_segments_task:
+  description: >
+    The PDF has already been segmented into topic clusters. The segments
+    data is provided in the {segments} variable. Each segment has a "title"
+    and "paragraphs" list. Format these into a clean, readable lab report
+    with section headings and the paragraph content under each heading.
+  expected_output: >
+    A well-formatted lab report with each segment as a section, showing
+    the topic title and the full paragraph content underneath.
+  agent: lab_analyst
