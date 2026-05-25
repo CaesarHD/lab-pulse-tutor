@@ -219,3 +219,6 @@ __marimo__/
 .env
 __pycache__/
 .DS_Store
+
+# GROQ API Key
+.env

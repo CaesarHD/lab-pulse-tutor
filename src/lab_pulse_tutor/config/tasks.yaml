@@ -1,10 +1,32 @@
-format_segments_task:
+generate_questions_task:
   description: >
-    The PDF has already been segmented into topic clusters. The segments
-    data is provided in the {segments} variable. Each segment has a "title"
-    and "paragraphs" list. Format these into a clean, readable lab report
-    with section headings and the paragraph content under each heading.
+    Review the following segmented content extracted from the laboratory PDF:
+    {segmented_content}
+    
+    For each chapter, read the paragraphs and generate 2-3 insightful questions 
+    that test a student's understanding of that specific chapter's material.
+    Output the original chapter content alongside the generated questions.
   expected_output: >
-    A well-formatted lab report with each segment as a section, showing
-    the topic title and the full paragraph content underneath.
-  agent: lab_analyst
+    A structured document listing each chapter's title, its full text, and the generated questions for that chapter.
+  agent: question_generator
+
+answer_questions_task:
+  description: >
+    Review the chapters and the questions generated in the previous task.
+    Adopt the persona of an average student. For each question, attempt to answer it using ONLY the provided chapter text.
+    Do NOT act like an AI; answer like a human student. Make minor logical errors occasionally, 
+    and explicitly state if you don't fully understand a complex concept.
+  expected_output: >
+    A document containing the chapter titles, the questions, and the simulated student's answers to those questions.
+  agent: student_simulator
+
+correct_answers_task:
+  description: >
+    Review the original chapters, the questions, and the simulated student's answers from the previous task.
+    Evaluate the accuracy of the student's answers. 
+    Where the student makes mistakes or shows lack of understanding, provide gentle corrections and 
+    supplementary explanations to teach the correct concepts clearly.
+  expected_output: >
+    A final markdown report structured by chapter. For each chapter, include the original questions, 
+    the student's answers, and the Tutor's evaluation, corrections, and additional explanations.
+  agent: tutor_corrector
