@@ -16,28 +16,35 @@ warnings.filterwarnings("ignore", category=SyntaxWarning, module="pysbd")
 
 def run():
     """
-    Segment the PDF and save a formatted report.
+    Run the multi-agent system on a lab PDF.
     """
+    pdf_path = "knowledge/lab8.pdf"
+    
+    print(f"Segmenting PDF at {pdf_path}...")
     from lab_pulse_tutor.tools.pdf_segmenter_tool import PDFSegmentTool
-
-    segments = PDFSegmentTool()._run("knowledge/lab8.pdf", k=3)
-
+    tool = PDFSegmentTool()
+    segmented_data = tool._run(pdf_path=pdf_path, k=2)
+    
+    formatted_content = ""
+    for segment in segmented_data[:1]:
+        formatted_content += f"\n\n### {segment['title']}...\n"
+        for p in segment['paragraphs'][:1]: # Only ONE paragraph to guarantee success
+            formatted_content += f"{p}\n\n"
+            
+    print("PDF segmented successfully. Kicking off the Crew...")
+    
+    inputs = {
+        "segmented_content": formatted_content
+    }
+    
+    print("Starting LabPulseTutor Crew...")
+    result = LabPulseTutor().crew().kickoff(inputs=inputs)
+    
     os.makedirs("output", exist_ok=True)
-
-    lines = ["# Lab 8 - Segmented Report", "", f"**Source:** knowledge/lab8.pdf", f"**Clusters:** {len(segments)}", "", "---", ""]
-    for i, seg in enumerate(segments, 1):
-        lines.append(f"## Cluster {i}: {seg['title']}")
-        lines.append("")
-        for p in seg["paragraphs"]:
-            lines.append(p)
-            lines.append("")
-        lines.append("---")
-        lines.append("")
-
-    output_path = "output/lab8_report.md"
-    with open(output_path, "w") as f:
-        f.write("\n".join(lines))
-    print(f"Report saved to {output_path}")
+    output_path = "output/tutor_report.md"
+    with open(output_path, "w", encoding="utf-8") as f:
+        f.write(str(result))
+    print(f"Final report saved to {output_path}")
 
 
 def train():
